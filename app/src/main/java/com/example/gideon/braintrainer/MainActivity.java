@@ -11,48 +11,31 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<Integer> answer = new ArrayList<Integer>();
+    ArrayList<Integer> answers = new ArrayList<Integer>();
     private Button startButton, button, button1, button2, button3;
-    private TextView questionTextView;
-    private int locationOfCorrectAnswer;
+    private TextView questionTextView, resultTextView, pointsTextView;
+    private int locationOfCorrectAnswer, score = 0, numOfQuestions = 0;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+    private void initialize() {
+        questionTextView = (TextView) findViewById(R.id.questionTextView);
+        pointsTextView = (TextView) findViewById(R.id.pointsTextView);
+        resultTextView = (TextView) findViewById(R.id.resultTextView);
         startButton = (Button) findViewById(R.id.startButton);
         button = (Button) findViewById(R.id.ans1);
         button1 = (Button) findViewById(R.id.ans2);
         button2 = (Button) findViewById(R.id.ans3);
         button3 = (Button) findViewById(R.id.ans4);
+    }
 
-        Random rand = new Random();
-        int a = rand.nextInt(101);
-        int b = rand.nextInt(101);
-        questionTextView = (TextView) findViewById(R.id.questionTextView);
-        questionTextView.setText(Integer.toString(a) + " + " + Integer.toString(b));
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        initialize();
 
-        locationOfCorrectAnswer = rand.nextInt(4);
-        int incorrectAns;
+        generateQuestion();
 
-        for (int i = 0; i < 4; i++) {
-            if (i == locationOfCorrectAnswer) {
-                answer.add(a + b);
-            } else {
-                incorrectAns = rand.nextInt(202);
 
-                while (incorrectAns == a + b) {
-                    incorrectAns = rand.nextInt(202);
-                }
-                answer.add(incorrectAns);
-            }
-        }
-
-        button.setText(Integer.toString(answer.get(0)));
-        button1.setText(Integer.toString(answer.get(1)));
-        button2.setText(Integer.toString(answer.get(2)));
-        button3.setText(Integer.toString(answer.get(3)));
     }
 
     public void start(View view) {
@@ -61,6 +44,47 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void chooseAnswer(View view) {
+        if (view.getTag().toString().equals(Integer.toHexString(locationOfCorrectAnswer))) {
+            resultTextView.setText("Correct!");
+            score++;
+        } else {
+            resultTextView.setText("Wrong!");
+        }
+        numOfQuestions++;
+        pointsTextView.setText(Integer.toString(score) + "/" + Integer.toString(numOfQuestions));
 
+        generateQuestion();
+    }
+
+    private void generateQuestion() {
+        Random rand = new Random();
+        int a = rand.nextInt(101);
+        int b = rand.nextInt(101);
+
+        questionTextView.setText(Integer.toString(a) + " + " + Integer.toString(b));
+
+        locationOfCorrectAnswer = rand.nextInt(4);
+
+        answers.clear();
+
+        int incorrectAns;
+
+        for (int i = 0; i < 4; i++) {
+            if (i == locationOfCorrectAnswer) {
+                answers.add(a + b);
+            } else {
+                incorrectAns = rand.nextInt(202);
+
+                while (incorrectAns == a + b) {
+                    incorrectAns = rand.nextInt(202);
+                }
+                answers.add(incorrectAns);
+            }
+        }
+
+        button.setText(Integer.toString(answers.get(0)));
+        button1.setText(Integer.toString(answers.get(1)));
+        button2.setText(Integer.toString(answers.get(2)));
+        button3.setText(Integer.toString(answers.get(3)));
     }
 }
